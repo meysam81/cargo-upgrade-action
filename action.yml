@@ -21,7 +21,7 @@ runs:
       run: cargo upgrade -i allow
     - name: Run cargo update
       shell: bash
-      run: cargo update --all
+      run: cargo update
     - name: Check if any files changed
       id: check
       shell: bash
