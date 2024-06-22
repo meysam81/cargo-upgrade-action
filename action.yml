@@ -3,9 +3,9 @@ description: Upgrade Cargo.toml dependencies and create a pull request
 
 inputs:
   cargo-edit-version:
-    description: The version of cargo-edit to use. Defaults to ~v0.12
+    description: The version of cargo-edit to use. Defaults to ~0.12
     required: false
-    default: ~v0.12
+    default: ~0.12
   token:
     description: The GitHub token to use for creating the pull request
     required: true
