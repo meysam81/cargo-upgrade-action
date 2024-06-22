@@ -45,7 +45,8 @@ runs:
       run: |
         git add .
         git commit -m "chore: upgrade dependencies"
-    - name: Create pull request
+    - if: steps.check.outputs.changed == 'true'
+      name: Create pull request
       shell: bash
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
