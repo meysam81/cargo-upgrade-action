@@ -1,0 +1,56 @@
+name: Cargo Upgrade
+description: Upgrade Cargo.toml dependencies and create a pull request
+
+inputs:
+  cargo-edit-version:
+    description: The version of cargo-edit to use. Defaults to ~v0.12
+    required: false
+    default: ~v0.12
+
+runs:
+  using: composite
+  steps:
+    - name: Install cargo-edit
+      shell: bash
+      run: cargo install cargo-edit --version ${{ inputs.cargo-edit-version }}
+    - name: Run cargo upgrade
+      shell: bash
+      run: cargo upgrade -i allow
+    - name: Run cargo update
+      shell: bash
+      run: cargo update --all
+    - name: Check if any files changed
+      id: check
+      shell: bash
+      run: |
+        changed=$(git status --porcelain)
+        if [ -z "$changed" ]; then
+          echo "changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+    - if: steps.check.outputs.changed == 'true'
+      name: Checkut to a new branch
+      shell: bash
+      run: git checkout -b ${{ github.actor }}/chore/upgrade-dependencies-${{ github.run_id }}
+    - if: steps.check.outputs.changed == 'true'
+      name: Configure git
+      shell: bash
+      run: |
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git config --global user.name "${{ github.actor }}"
+    - if: steps.check.outputs.changed == 'true'
+      name: Commit changes
+      shell: bash
+      run: |
+        git add .
+        git commit -m "chore: upgrade dependencies"
+    - name: Create pull request
+      shell: bash
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh pr create --fill -H $(git branch --show-current)
+
+branding:
+  icon: arrow-up-right
+  color: green
