@@ -6,6 +6,10 @@ inputs:
     description: The version of cargo-edit to use. Defaults to ~0.12
     required: false
     default: ~0.12
+  extra-flags:
+    description: Extra flags to pass to cargo-upgrade. For example `-i allow`.
+    required: false
+    default: ""
   token:
     description: The GitHub token to use for creating the pull request
     required: true
@@ -18,7 +22,7 @@ runs:
       run: cargo install cargo-edit --version ${{ inputs.cargo-edit-version }}
     - name: Run cargo upgrade
       shell: bash
-      run: cargo upgrade -i allow
+      run: cargo upgrade ${{ inputs.extra-flags }}
     - name: Run cargo update
       shell: bash
       run: cargo update
