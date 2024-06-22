@@ -6,6 +6,9 @@ inputs:
     description: The version of cargo-edit to use. Defaults to ~v0.12
     required: false
     default: ~v0.12
+  token:
+    description: The GitHub token to use for creating the pull request
+    required: true
 
 runs:
   using: composite
@@ -49,7 +52,7 @@ runs:
       name: Create pull request
       shell: bash
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ inputs.token }}
       run: gh pr create --fill -H $(git branch --show-current)
 
 branding:
